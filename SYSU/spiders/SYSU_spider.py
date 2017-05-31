@@ -32,12 +32,15 @@ class SYSUSpider(scrapy.Spider):
                 from_encoding=chardet.detect(response.body)['encoding']
                 soup = BeautifulSoup(response.body, 'lxml', from_encoding=from_encoding)
                 m = re.match(r'http[s]*://(.*?).sysu.edu.cn', response.url)
+                '''
                 if m:
                     if not os.path.exists(os.path.join('data', m.group(1))):
                         os.mkdir(os.path.join('data', m.group(1)))
                     with open(os.path.join('data', m.group(1), soup.title.text) + '.html', 'wb') as f:
                         f.write(response.body)
+                '''
                 for link in soup.find_all('a'):
                     url = link.get('href')
-                    if url and not link.get('type'):
+                    if url and not link.get('type') and not (url.endswith('jpg') or url.endswith('png')):
+                        print(url)
                         yield scrapy.Request(urllib.parse.urljoin(response.url, url))
