@@ -14,9 +14,10 @@ logger = logging.getLogger('SYSU spider')
 class SYSUSpider(scrapy.Spider):
     name = 'SYSU'
     allowed_domains = ["sysu.edu.cn"]
-    website_possible_httpstatus_list = [301, 302, 404]
+    website_possible_httpstatus_list = [301, 302, 403, 404, 503, 505]
     start_urls = [
-        "http://www.sysu.edu.cn/2012/cn/index.htm"
+        "http://www.sysu.edu.cn/2012/cn/index.htm",
+        "http://sdcs.sysu.edu.cn"
     ]
     
     def parse(self, response):
@@ -30,7 +31,6 @@ class SYSUSpider(scrapy.Spider):
             else:
                 logging.info('got page: %s' % response.url)
                 content_type = response.headers.get("Content-Type")
-                print(content_type)
                 if content_type.find(b'text/html') != -1:
                     from_encoding=chardet.detect(response.body)['encoding']
                     soup = BeautifulSoup(response.body, 'lxml', from_encoding=from_encoding)
@@ -46,5 +46,4 @@ class SYSUSpider(scrapy.Spider):
                             url = link['href']
                             if not link.get('type'):
                                 url = urllib.parse.urljoin(response.url, url)
-                                print("url: " + url)
                                 yield scrapy.Request(url)
