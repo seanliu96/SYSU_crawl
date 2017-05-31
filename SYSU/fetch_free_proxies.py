@@ -146,7 +146,7 @@ def check(proxy):
         # print(e)
         return False;
 
-def fetch_all(endpage=10):
+def fetch_all(endpage=5):
     proxies = []
     for i in range(1, endpage):
         proxies += fetch_kxdaili(i)
